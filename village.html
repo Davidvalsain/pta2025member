@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modification des informations</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f4f4f4;
+      overflow-x: hidden;
+    }
+    body {
+      display: flex;
+      align-items: start;
+      justify-content: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100vh;
+      width: 90%;
+      max-width: 500px;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    img.header {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      display: block;
+      margin: 0 auto 24px;
+    }
+    .field-group {
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .field-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .field-input {
+      background: white;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      padding: 8px 40px 8px 4px;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+      caret-color: transparent;
+      cursor: pointer;
+    }
+    .field-input.locked {
+      color: #999;
+    }
+    .field-input:focus {
+      border-bottom: 2px solid #007BFF;
+      caret-color: auto;
+    }
+    .caret-icon {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%) rotate(0deg);
+      font-size: 1.2em;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+    .caret-icon.rotated {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    .dropdown-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 10;
+      overflow-y: auto;
+      max-height: 0;
+      transition: max-height 0.3s ease-out;
+    }
+    .dropdown-options.open {
+      max-height: 300px;
+    }
+    .dropdown-option {
+      padding: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .dropdown-option:hover {
+      background-color: #f0f0f0;
+    }
+    .dropdown-option.active {
+      background-color: #e0f0ff;
+      font-weight: bold;
+    }
+    .custom-input-wrapper {
+      margin-top: 8px;
+      display: none;
+      position: relative;
+    }
+    .custom-input-wrapper.visible {
+      display: block;
+    }
+    .custom-input {
+      width: 100%;
+      padding: 8px 40px 8px 4px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .custom-input:focus {
+      border-color: #007BFF;
+    }
+    .tick-icon {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2em;
+      color: #007BFF;
+      cursor: pointer;
+      display: none;
+    }
+    .tick-icon.visible {
+      display: block;
+    }
+    .button-wrapper {
+      text-align: right;
+      margin-top: 12px;
+    }
+    #nextBtn {
+      padding: 12px 24px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: auto;
+    }
+    #nextBtn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="ptaheader.svg" alt="En-tête PTA" class="header">
+    <div class="field-group">
+      <label class="field-label" for="village">Village</label>
+      <div class="input-wrapper">
+        <input type="text" id="village" class="field-input locked" readonly />
+        <span id="caretIcon" class="caret-icon">&#94;</span>
+        <div id="dropdown" class="dropdown-options">
+          <div class="dropdown-option">Anse Jonchée</div>
+          <div class="dropdown-option">Bambous Virieux</div>
+          <div class="dropdown-option">Bois des Amourettes</div>
+          <div class="dropdown-option">Grand Bel Air</div>
+          <div class="dropdown-option">Grand Sable</div>
+          <div class="dropdown-option">Mahébourg</div>
+          <div class="dropdown-option">New Grove</div>
+          <div class="dropdown-option">Old Grand Port</div>
+          <div class="dropdown-option">Petit Bel Air</div>
+          <div class="dropdown-option">Providence</div>
+          <div class="dropdown-option">Riche en Eau</div>
+          <div class="dropdown-option">Rose-Belle</div>
+          <div class="dropdown-option">Vieux Grand Port</div>
+          <div class="dropdown-option">Ville Noire</div>
+          <div class="dropdown-option">Autre</div>
+        </div>
+      </div>
+      <div class="custom-input-wrapper" id="customInputWrapper">
+        <input type="text" id="customVillage" class="custom-input" placeholder="Veuillez saisir un village" />
+        <span id="tickIcon" class="tick-icon">&#10004;</span>
+      </div>
+      <div class="button-wrapper">
+        <button id="nextBtn" disabled>Suivant</button>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      const rawData = sessionStorage.getItem('selectedMember');
+      let memberData = {};
+      try {
+        memberData = JSON.parse(rawData) || {};
+      } catch (e) {
+        console.warn("Failed to parse member data:", e);
+      }
+
+      const villageInput = document.getElementById('village');
+      const nextBtn = document.getElementById('nextBtn');
+      const dropdown = document.getElementById('dropdown');
+      const caretIcon = document.getElementById('caretIcon');
+      const customInputWrapper = document.getElementById('customInputWrapper');
+      const customVillage = document.getElementById('customVillage');
+      const tickIcon = document.getElementById('tickIcon');
+
+      if (memberData && memberData["town/village"]) {
+        villageInput.value = memberData["town/village"];
+      }
+
+      function toggleDropdown() {
+        const isOpen = dropdown.classList.contains('open');
+        if (isOpen) {
+          dropdown.classList.remove('open');
+          caretIcon.classList.remove('rotated');
+          dropdown.querySelectorAll('.dropdown-option.active')
+            .forEach(opt => opt.classList.remove('active'));
+        } else {
+          dropdown.classList.add('open');
+          caretIcon.classList.add('rotated');
+          const current = villageInput.value.trim();
+          if (current) {
+            dropdown.querySelectorAll('.dropdown-option.active')
+              .forEach(opt => opt.classList.remove('active'));
+            const match = Array.from(dropdown.children)
+              .find(opt => opt.textContent.trim() === current);
+            if (match) {
+              match.classList.add('active');
+              match.scrollIntoView({ block: 'nearest' });
+            }
+          }
+        }
+      }
+
+      villageInput.addEventListener('click', e => {
+        e.preventDefault();
+        toggleDropdown();
+      });
+
+      dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+        option.addEventListener('click', () => {
+          const selected = option.textContent.trim();
+          if (selected === "Autre") {
+            villageInput.value = "";
+            customInputWrapper.classList.add('visible');
+            customVillage.focus();
+            tickIcon.classList.remove('visible');
+            nextBtn.disabled = true;
+          } else {
+            villageInput.value = selected;
+            customInputWrapper.classList.remove('visible');
+            villageInput.classList.remove('locked');
+            nextBtn.disabled = false;
+          }
+          dropdown.classList.remove('open');
+          caretIcon.classList.remove('rotated');
+        });
+      });
+
+      customVillage.addEventListener('input', () => {
+        if (customVillage.value.trim() !== "") {
+          tickIcon.classList.add('visible');
+        } else {
+          tickIcon.classList.remove('visible');
+          nextBtn.disabled = true;
+        }
+      });
+
+      tickIcon.addEventListener('click', () => {
+        if (customVillage.value.trim() !== "") {
+          villageInput.value = customVillage.value;
+          villageInput.classList.remove('locked');
+          customInputWrapper.classList.remove('visible');
+          tickIcon.classList.remove('visible');
+          nextBtn.disabled = false;
+        }
+      });
+
+      document.addEventListener('click', event => {
+        if (!villageInput.contains(event.target) &&
+            !dropdown.contains(event.target)) {
+          dropdown.classList.remove('open');
+          caretIcon.classList.remove('rotated');
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        let selectedMember = {};
+        const rawMember = sessionStorage.getItem('selectedMember');
+        if (rawMember) {
+          try {
+            selectedMember = JSON.parse(rawMember) || {};
+          } catch (e) {
+            console.warn("Error parsing selectedMember:", e);
+          }
+        }
+        selectedMember["town/village"] = villageInput.value;
+        sessionStorage.setItem('selectedMember', JSON.stringify(selectedMember));
+        console.log("Updated selectedMember in sessionStorage:", selectedMember);
+        window.location.href = 'district.html';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modification des informations</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f4f4f4;
+      overflow-x: hidden;
+    }
+    body {
+      display: flex;
+      align-items: start;
+      justify-content: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 100vh;
+      max-width: 500px;
+      width: 90%;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    img.header {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      display: block;
+      margin: 0 auto 24px;
+    }
+    .field-group {
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .field-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .field-input {
+      background: white;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      padding: 8px 4px;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+      caret-color: transparent;
+      cursor: pointer;
+    }
+    .field-input.locked {
+      color: #999;
+    }
+    .field-input:focus {
+      border-bottom: 2px solid #007BFF;
+      caret-color: auto;
+    }
+    .button-wrapper {
+      text-align: right;
+      margin-top: 12px;
+    }
+    #nextBtn {
+      padding: 12px 24px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: auto;
+    }
+    #nextBtn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+    .spacer {
+      height: 80px;
+    }
+    /* Field help message styling */
+    .field-help {
+      font-size: 0.85em;
+      color: #007BFF;
+      padding-top: 4px;
+      min-height: 18px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="ptaheader.svg" alt="En-tête PTA" class="header">
+    <div class="field-group">
+      <label class="field-label" for="prenom">Prénom</label>
+      <div class="input-wrapper">
+        <input type="text" id="prenom" class="field-input locked" placeholder="" readonly />
+      </div>
+      <!-- Help message with instruction -->
+      <span class="field-help" id="prenomHelp">* Veuillez inscrire vos prénoms comme sur votre carte d'identité.</span>
+      <div class="button-wrapper">
+        <button id="nextBtn" disabled>Suivant</button>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      // Retrieve existing member data from sessionStorage.
+      const rawData = sessionStorage.getItem('selectedMember');
+      console.log("Raw selectedMember from sessionStorage:", rawData);
+      let memberData = {};
+      try {
+        memberData = JSON.parse(rawData) || {};
+      } catch (e) {
+        console.warn("Failed to parse member data:", e);
+      }
+      const prenomInput = document.getElementById('prenom');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      // Prefill with existing 'other names' (if available) while keeping the locked style.
+      if (memberData && memberData["other names"]) {
+        prenomInput.value = memberData["other names"];
+      }
+      
+      // When the input is tapped, remove the readonly attribute and locked style,
+      // and enable the "Suivant" button.
+      prenomInput.addEventListener('click', (e) => {
+        e.preventDefault();
+        prenomInput.removeAttribute('readonly');
+        prenomInput.classList.remove('locked');
+        nextBtn.disabled = false;
+      });
+      
+      // When "Suivant" is tapped, update sessionStorage with the current input value and redirect to streetname.html.
+      nextBtn.addEventListener('click', () => {
+        let selectedMember = {};
+        const rawMember = sessionStorage.getItem('selectedMember');
+        if (rawMember) {
+          try {
+            selectedMember = JSON.parse(rawMember) || {};
+          } catch (e) {
+            console.warn("Error parsing selectedMember:", e);
+          }
+        }
+        // Update the "other names" field with the current value of the input.
+        selectedMember["other names"] = prenomInput.value;
+        sessionStorage.setItem('selectedMember', JSON.stringify(selectedMember));
+        console.log("Updated selectedMember in sessionStorage:", selectedMember);
+        // Redirect to streetname.html.
+        window.location.href = 'streetname.html';
+      });
+    });
+  </script>
+</body>
+</html>
